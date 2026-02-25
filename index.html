@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Happy Holi — PayZapp</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ===== Fixed Toolbar ===== -->
+  <header class="toolbar" id="toolbar">
+    <button class="toolbar-btn cancel-btn" id="cancelBtn" aria-label="Close">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- ===== Single Scene ===== -->
+  <div class="scene" id="scene">
+    <div class="box-wrapper" id="boxWrapper">
+
+      <!-- Lid -->
+      <div class="box-lid" id="boxLid">
+        <img src="assets/lid.png" alt="Box Lid" class="lid-img" />
+      </div>
+
+      <!-- Box body + assets inside -->
+      <div class="box-body" id="boxBody">
+        <img src="assets/Box.png" alt="Box" class="box-img" />
+
+        <!-- Assets layer -->
+        <div class="assets-layer" id="assetsLayer">
+
+          <!-- Letter (center, styled in CSS) -->
+          <div class="asset asset-letter" id="assetLetter">
+            <div class="letter-paper">
+              <!-- Content will go here later -->
+            </div>
+          </div>
+
+          <!-- Gujiya (overlapping left side) -->
+          <button class="asset asset-gujiya" id="assetGujiya" aria-label="Gujiya">
+            <img src="assets/gujiya.png" alt="Gujiya" class="asset-img" />
+          </button>
+
+          <!-- Pichkari (overlapping right side) -->
+          <button class="asset asset-pichkari" id="assetPichkari" aria-label="Pichkari">
+            <img src="assets/pichkari.png" alt="Pichkari" class="asset-img" />
+          </button>
+
+          <!-- Gulal (overlapping bottom-right) -->
+          <button class="asset asset-gulal" id="assetGulal" aria-label="Gulal">
+            <img src="assets/gulal.png" alt="Gulal" class="asset-img" />
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Spray Canvas ===== -->
+  <canvas id="sprayCanvas"></canvas>
+
+  <!-- ===== Asset Backdrop ===== -->
+  <div class="asset-backdrop" id="assetBackdrop"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
