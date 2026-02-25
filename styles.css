@@ -142,7 +142,7 @@ body {
   position: absolute;
   top: 15%;
   left: 50%;
-  transform: translateX(-47%) rotate(-4deg);
+  transform: translateX(-50%) rotate(4deg);
   height: 70%;
   width: 48%;
   aspect-ratio: 37 / 55;
@@ -245,7 +245,7 @@ body {
 
 /* ===== Gulal (bottom-right, overlapping letter) ===== */
 .asset-gulal {
-  bottom: 0%;
+  bottom: 2%;
   right: 0%;
   width: 42%;
   z-index: 4;

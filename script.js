@@ -74,7 +74,6 @@ function playIntro() {
   tl.to(boxLid, {
     rotation: -25,
     x: '-120vw',
-    opacity: 0,
     duration: 0.9,
     ease: 'power2.in',
   });
@@ -90,24 +89,24 @@ function playIntro() {
   tl.to('#assetGujiya', {
     left: '2%',
     bottom: '25%',
-    scale: 0.8,
+    scale: 0.7,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
 
   tl.to('#assetPichkari', {
-    right: '2%',
-    top: '22%',
-    rotation: -10,
-    scale: 1.1,
+    right: '10%',
+    top: '20%',
+    rotation: -2,
+    scale: 0.6,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
 
   tl.to('#assetGulal', {
-    right: '5%',
-    bottom: '5%',
-    scale: 0.85,
+    right: '2.5%',
+    bottom: '2%',
+    scale: 0.7,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
