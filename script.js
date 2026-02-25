@@ -11,9 +11,11 @@ const CONFIG = {
     'assets/pichkari-suspension.png',
     'assets/pitchkari-suspension.png',
     'assets/pichkari_suspension.png',
-    'assets/pitchkari_suspension.png',
   ],
 };
+
+// Force 2D transforms so Safari recalculates vector bounds during scaling
+gsap.config({ force3D: false });
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -99,35 +101,35 @@ function playIntro() {
   // Move assets to "viewport fit" positions during the zoom
   tl.to('#assetGujiya', {
     left: '8%',
-    bottom: '13%',
+    bottom: '22%',
     rotation: 33,
-    scale: 0.93,
+    scale: 0.7,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '<');
 
   tl.to('#assetGujiya2', {
-    left: '24%',
-    bottom: '23%',
+    left: '13%',
+    bottom: '28%',
     rotation: 33,
-    scale: 0.93,
+    scale: 0.7,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '<');
 
   tl.to('#assetPichkari', {
-    right: '12%',
+    right: '20%',
     top: '25%',
     rotation: 0,
-    scale: 0.62,
+    scale: 0.72,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '<');
 
   tl.to('#assetGulal', {
     right: '5%',
-    bottom: '5%',
-    scale: 0.99,
+    bottom: '3%',
+    scale: 0.6,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '<');

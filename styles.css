@@ -78,7 +78,6 @@ body {
   position: relative;
   width: 270px;
   transform: scale(0.35);
-  will-change: transform;
 }
 
 /* ===== Lid ===== */
@@ -89,7 +88,6 @@ body {
   transform: translateX(-50%) scale(1.09);
   z-index: 5;
   width: 100%;
-  will-change: transform;
 }
 
 .lid-img {
@@ -160,6 +158,8 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 0 30px #FFE9BC;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .letter-content {
@@ -175,6 +175,8 @@ body {
   text-align: center;
   opacity: 0;
   transform: translateY(15px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   /* Hidden initially, will be faded in via JS */
 }
 
@@ -232,7 +234,7 @@ body {
 }
 
 .asset-gujiya-secondary {
-  left: 24%;
+  left: 14%;
   bottom: 23%;
   transform: rotate(33deg);
   z-index: 4;
@@ -257,7 +259,7 @@ body {
 
 /* ===== Gulal (bottom-right, overlapping letter) ===== */
 .asset-gulal {
-  bottom: 2%;
+  bottom: 8%;
   right: 0%;
   width: 37.8%;
   z-index: 4;
