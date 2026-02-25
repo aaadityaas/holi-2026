@@ -1161,14 +1161,14 @@ $('#assetGulal').addEventListener('click', () => {
   tl.to(overlay, { rotation: 6, duration: 0.08, ease: 'sine.inOut' });
   tl.to(overlay, { rotation: 0, duration: 0.1, ease: 'sine.out' });
 
-  tl.to({}, { duration: 0.06 });
+  tl.to({}, { duration: 0.08 });
   tl.to(overlay, {
     left: startCX,
     top: startCY,
     scale: 1,
     rotation: 0,
-    duration: 0.36,
-    ease: 'power2.inOut',
+    duration: 0.75,
+    ease: 'power3.inOut',
   });
 });
 
