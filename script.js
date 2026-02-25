@@ -1012,15 +1012,16 @@ function bindGujiyaInteraction(el) {
     tl.to(el, {
       x: centerX,
       y: centerY,
+      rotation: 0,
       scale: 1.26,
-      duration: 0.45,
-      ease: 'power2.out',
+      duration: 0.55,
+      ease: 'back.out(1.5)',
     });
     tl.to(el, {
       scale: 1.296,
       duration: 0.18,
       ease: 'back.out(2.2)',
-    });
+    }, '-=0.15');
 
     /* ── 2. Hand off to circle-mask canvas ── */
     tl.call(() => {
@@ -1091,10 +1092,11 @@ $('#assetGulal').addEventListener('click', () => {
     left: targetCX,
     top: targetCY,
     scale: approachScale,
-    duration: 0.42,
-    ease: 'power3.out',
+    rotation: 0,
+    duration: 0.55,
+    ease: 'back.out(1.5)',
   });
-  tl.to(overlay, { scale: centerScale, duration: 0.2, ease: 'back.out(1.9)' });
+  tl.to(overlay, { scale: centerScale, duration: 0.2, ease: 'back.out(1.9)' }, '-=0.15');
 
   tl.call(() => {
     createGulalDustCloudTimeline(overlay);
