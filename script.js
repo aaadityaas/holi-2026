@@ -1026,15 +1026,25 @@ function bindGujiyaInteraction(el) {
     /* ── 2. Hand off to circle-mask canvas ── */
     tl.call(() => {
       startCircleMaskAnimation(el, () => {
+        // Place it off-screen to slide back in
         gsap.set(el, {
-          x: 0,
-          y: 0,
+          x: -120,
+          y: 180,
           scaleX: baseScaleX,
           scaleY: baseScaleY,
-          rotation: baseRotation,
+          rotation: baseRotation - 120,
           opacity: 1,
         });
-        resetAsset(el);
+
+        // Slide and rotate back into its original resting spot
+        gsap.to(el, {
+          x: 0,
+          y: 0,
+          rotation: baseRotation,
+          duration: 0.7,
+          ease: 'back.out(1.4)',
+          onComplete: () => resetAsset(el),
+        });
       }, sourceImgSrc);
     });
   });
