@@ -41,8 +41,19 @@
 
           <!-- Letter (center, styled in CSS) -->
           <div class="asset asset-letter" id="assetLetter">
-            <div class="letter-paper">
-              <!-- Content will go here later -->
+            <div class="letter-paper" id="letterPaper">
+              <div class="letter-content" id="letterContent">
+                <h1 class="letter-title">Happy Holi</h1>
+                <p class="letter-text">
+                  You have already earned <strong>₹500</strong> on PayZapp. This Holi, add more colour to your savings
+                  with a <strong>Pixel Credit Card</strong>.
+                </p>
+                <p class="letter-text">
+                  Enjoy up to <strong>5% cashback</strong> on your everyday spends and brighten your yearly savings by
+                  up to <strong>₹7,000</strong>.
+                </p>
+                <button class="letter-cta" id="letterCta">Upgrade Credit Limit</button>
+              </div>
             </div>
           </div>
 
@@ -67,16 +78,12 @@
     </div>
   </div>
 
-  <!-- ===== Fluid Canvas ===== -->
-  <canvas id="fluidCanvas"></canvas>
-
   <!-- ===== Spray Canvas ===== -->
   <canvas id="sprayCanvas"></canvas>
 
   <!-- ===== Asset Backdrop ===== -->
   <div class="asset-backdrop" id="assetBackdrop"></div>
 
-  <script src="fluid.js"></script>
   <script src="script.js"></script>
 </body>
 

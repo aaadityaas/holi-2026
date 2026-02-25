@@ -111,6 +111,14 @@ function playIntro() {
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
+
+  // Fade in the text message on the letter after the zoom completes
+  tl.to('#letterContent', {
+    opacity: 1,
+    y: 0,
+    duration: 0.6,
+    ease: 'power1.out',
+  });
 }
 
 playIntro();
