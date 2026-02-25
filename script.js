@@ -96,10 +96,10 @@ function playIntro() {
   }, '<');
 
   tl.to('#assetPichkari', {
-    right: '-8%',
-    top: '30%',
+    right: '2%',
+    top: '22%',
     rotation: -10,
-    scale: 1.3,
+    scale: 1.1,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
