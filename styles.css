@@ -161,7 +161,7 @@ body {
 
 /* ===== Gujiya (bottom-left, overlapping letter) ===== */
 .asset-gujiya {
-  bottom: 18%;
+  bottom: 12%;
   left: 5%;
   width: 40%;
   z-index: 4;
