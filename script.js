@@ -90,7 +90,7 @@ function playIntro() {
   tl.to('#assetGujiya', {
     left: '2%',
     bottom: '25%',
-    scale: 1.05,
+    scale: 0.8,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
@@ -107,7 +107,7 @@ function playIntro() {
   tl.to('#assetGulal', {
     right: '5%',
     bottom: '5%',
-    scale: 1.1,
+    scale: 0.85,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
