@@ -47,7 +47,7 @@ function getTargetScale() {
   const screenH = window.innerHeight;
   const boxH = 326; // approx box height in px at base size
   // Fill ~90% of screen height
-  const targetH = screenH * 0.9;
+  const targetH = screenH * 1.1;
   return targetH / boxH;
 }
 
