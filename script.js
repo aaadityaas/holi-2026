@@ -88,9 +88,9 @@ function playIntro() {
 
   // Move assets to "viewport fit" positions during the zoom
   tl.to('#assetGujiya', {
-    left: '-15%',
+    left: '-5%',
     bottom: '25%',
-    scale: 1.2,
+    scale: 1.05,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '<');
@@ -105,8 +105,8 @@ function playIntro() {
   }, '<');
 
   tl.to('#assetGulal', {
-    right: '-5%',
-    bottom: '-5%',
+    right: '5%',
+    bottom: '5%',
     scale: 1.1,
     duration: 1.2,
     ease: 'power2.inOut',
