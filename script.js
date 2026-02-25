@@ -913,31 +913,47 @@ function startCircleMaskAnimation(el, onComplete, sourceImgSrc = 'assets/gujiya.
     /* initial draw */
     drawGujiyaFrame(ctx, img, cssW, cssH, [], drawRect);
 
-    /* two edge bites, then full final bite */
+    /* multiple smaller bites, then full final bite */
     const biteConfig = [
       {
-        cx: drawRect.x + (drawRect.w * 0.74),
-        cy: drawRect.y + (drawRect.h * 0.33),
-        maxR: drawRect.w * 0.13,
-        shakeX: 4,
-        duration: 0.24,
-        pauseAfter: 0.12,
-      },
-      {
-        cx: drawRect.x + (drawRect.w * 0.56),
-        cy: drawRect.y + (drawRect.h * 0.22),
-        maxR: drawRect.w * 0.14,
-        shakeX: -3,
-        duration: 0.24,
-        pauseAfter: 0.12,
-      },
-      {
-        cx: drawRect.x + (drawRect.w * 0.5),
+        cx: drawRect.x + (drawRect.w * 0.85),
         cy: drawRect.y + (drawRect.h * 0.5),
-        maxR: (Math.hypot(drawRect.w, drawRect.h) / 2) + 4, // covers full image by the 3rd bite
-        shakeX: 1,
+        maxR: drawRect.w * 0.08,
+        shakeX: 3,
+        duration: 0.20,
+        pauseAfter: 0.1,
+      },
+      {
+        cx: drawRect.x + (drawRect.w * 0.72),
+        cy: drawRect.y + (drawRect.h * 0.35),
+        maxR: drawRect.w * 0.10,
+        shakeX: -2,
+        duration: 0.20,
+        pauseAfter: 0.1,
+      },
+      {
+        cx: drawRect.x + (drawRect.w * 0.58),
+        cy: drawRect.y + (drawRect.h * 0.25),
+        maxR: drawRect.w * 0.12,
+        shakeX: 2,
+        duration: 0.20,
+        pauseAfter: 0.1,
+      },
+      {
+        cx: drawRect.x + (drawRect.w * 0.40),
+        cy: drawRect.y + (drawRect.h * 0.30),
+        maxR: drawRect.w * 0.11,
+        shakeX: -3,
+        duration: 0.20,
+        pauseAfter: 0.1,
+      },
+      {
+        cx: drawRect.x + (drawRect.w * 0.4),
+        cy: drawRect.y + (drawRect.h * 0.5),
+        maxR: (Math.hypot(drawRect.w, drawRect.h) / 2) + 4, // covers remaining image by the 5th bite
+        shakeX: 2,
         duration: 0.3,
-        pauseAfter: 0.24, // 200-300ms pause after final bite
+        pauseAfter: 0.24, // pause after final bite
       },
     ];
     const activeBites = [];
