@@ -188,32 +188,6 @@ body {
   z-index: 4;
 }
 
-/* ===== Colored Grain Overlay ===== */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 25;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 0.8 0 0 0 0 0 0 0 0 1 0' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-size: 250px 250px;
-  background-repeat: repeat;
-  opacity: 0.35;
-  mix-blend-mode: hard-light;
-  animation: powder-drift 12s linear infinite alternate;
-}
-
-@keyframes powder-drift {
-  0% {
-    background-position: 0px 0px;
-  }
-
-  100% {
-    background-position: 500px 150px;
-  }
-}
-
 /* ===== Asset Backdrop ===== */
 .asset-backdrop {
   position: fixed;
@@ -240,6 +214,18 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 600;
+}
+
+/* ===== Fluid Canvas ===== */
+#fluidCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 5;
+  mix-blend-mode: screen;
+  /* hides black background, blends Holi colors */
 }
 
 .asset.interacting {
