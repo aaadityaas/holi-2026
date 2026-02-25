@@ -1042,7 +1042,7 @@ function bindGujiyaInteraction(el) {
           y: 0,
           rotation: baseRotation,
           duration: 0.7,
-          ease: 'back.out(1.4)',
+          ease: 'back.out(0.5)',
           onComplete: () => resetAsset(el),
         });
       }, sourceImgSrc);
