@@ -149,9 +149,9 @@ let idleGulalAnim = null;
 function startIdleAnimations() {
   if (idleGulalAnim) return;
 
-  // Rotates once (360deg), stops, then starts rotating again
+  // Rotates a tiny bit (3deg), stops, then starts rotating again
   idleGulalAnim = gsap.to('#assetGulal', {
-    rotation: '+=360',
+    rotation: '+=3',
     duration: 1.8,
     ease: 'power2.inOut',
     repeat: -1,
