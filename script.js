@@ -7,22 +7,33 @@ const CONFIG = {
   userName: 'Anoop',
   introDelay: 0.5,
   sprayParticleCount: 80,
+  pitchkariSuspensionAssetCandidates: [
+    'assets/pichkari-suspension.png',
+    'assets/pitchkari-suspension.png',
+    'assets/pichkari_suspension.png',
+    'assets/pitchkari_suspension.png',
+  ],
 };
-
-const HOLI_COLORS = [
-  '#FF1493', '#FF6B35', '#FFD700', '#00E676',
-  '#E040FB', '#FF4081', '#00BCD4', '#FFEB3B',
-  '#F44336', '#7C4DFF', '#FF9800', '#4CAF50',
-];
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
 const boxWrapper = $('#boxWrapper');
 const boxLid = $('#boxLid');
-const assetBackdrop = $('#assetBackdrop');
 const cancelBtn = $('#cancelBtn');
 const sprayCanvas = $('#sprayCanvas');
+const assetGulal = $('#assetGulal');
+
+const SHAKE_CONFIG = {
+  minIntervalMs: 90,
+  speedThreshold: 26,
+  cooldownMs: 1400,
+};
+
+let shakeListenerStarted = false;
+let shakePermissionRequested = false;
+let shakeLastMotion = { x: 0, y: 0, z: 0, time: 0 };
+let shakeLastTriggerAt = 0;
 
 // ===== Cancel =====
 cancelBtn.addEventListener('click', () => {
@@ -87,9 +98,19 @@ function playIntro() {
 
   // Move assets to "viewport fit" positions during the zoom
   tl.to('#assetGujiya', {
-    left: '6%',
-    bottom: '15%',
-    scale: 0.7,
+    left: '8%',
+    bottom: '13%',
+    rotation: 33,
+    scale: 0.93,
+    duration: 1.2,
+    ease: 'back.out(2)',
+  }, '<');
+
+  tl.to('#assetGujiya2', {
+    left: '24%',
+    bottom: '23%',
+    rotation: 33,
+    scale: 0.93,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '<');
@@ -104,9 +125,9 @@ function playIntro() {
   }, '<');
 
   tl.to('#assetGulal', {
-    right: '2.5%',
-    bottom: '2%',
-    scale: 0.7,
+    right: '5%',
+    bottom: '5%',
+    scale: 0.99,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '<');
@@ -137,22 +158,44 @@ function resizeSprayCanvas() {
   sprayCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-function createSprayParticle(originX, originY, angle) {
-  const speed = 6 + Math.random() * 12;
-  const spread = (Math.random() - 0.5) * 0.6;
+function createSprayParticle(originX, originY, angle, opts = {}) {
+  const {
+    arcSpread = 0.6,
+    minSpeed = 6,
+    maxSpeed = 18,
+    sizeMin = 1,
+    sizeMax = 3.5,
+    alphaMin = 0.72,
+    alphaMax = 1,
+    gravityMin = 0.08,
+    gravityMax = 0.14,
+    decayMin = 0.011,
+    decayMax = 0.018,
+    friction = 0.985,
+    drift = 0.02,
+    stretchMin = 1,
+    stretchMax = 1,
+  } = opts;
+
+  const speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
+  const spread = (Math.random() - 0.5) * arcSpread;
   const finalAngle = angle + spread;
   const colors = ['#00BCD4', '#4FC3F7', '#B3E5FC', '#E0F7FA', '#26C6DA'];
+
   return {
-    x: originX, y: originY,
+    x: originX,
+    y: originY,
     vx: Math.cos(finalAngle) * speed,
     vy: Math.sin(finalAngle) * speed,
-    size: 1 + Math.random() * 2.5,
+    size: sizeMin + Math.random() * (sizeMax - sizeMin),
     color: colors[Math.floor(Math.random() * colors.length)],
-    alpha: 0.7 + Math.random() * 0.3,
-    gravity: 0.08 + Math.random() * 0.06,
-    friction: 0.985,
+    alpha: alphaMin + Math.random() * (alphaMax - alphaMin),
+    gravity: gravityMin + Math.random() * (gravityMax - gravityMin),
+    friction,
     life: 1,
-    decay: 0.012 + Math.random() * 0.015,
+    decay: decayMin + Math.random() * (decayMax - decayMin),
+    drift: (Math.random() - 0.5) * drift,
+    stretch: stretchMin + Math.random() * (stretchMax - stretchMin),
   };
 }
 
@@ -163,6 +206,8 @@ function animateSpray() {
 
   for (let i = sprayParticles.length - 1; i >= 0; i--) {
     const p = sprayParticles[i];
+    p.vx += p.drift;
+    p.drift *= 0.985;
     p.vy += p.gravity;
     p.vx *= p.friction;
     p.vy *= p.friction;
@@ -175,9 +220,21 @@ function animateSpray() {
 
     sprayCtx.globalAlpha = p.alpha;
     sprayCtx.fillStyle = p.color;
-    sprayCtx.beginPath();
-    sprayCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    sprayCtx.fill();
+
+    if (p.stretch > 1.05) {
+      const angle = Math.atan2(p.vy, p.vx);
+      sprayCtx.save();
+      sprayCtx.translate(p.x, p.y);
+      sprayCtx.rotate(angle);
+      sprayCtx.beginPath();
+      sprayCtx.ellipse(0, 0, p.size, p.size * p.stretch, 0, 0, Math.PI * 2);
+      sprayCtx.fill();
+      sprayCtx.restore();
+    } else {
+      sprayCtx.beginPath();
+      sprayCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      sprayCtx.fill();
+    }
   }
   sprayCtx.globalAlpha = 1;
 
@@ -188,79 +245,394 @@ function animateSpray() {
   }
 }
 
-function sprayWater(originX, originY, angle) {
+function sprayWater(originX, originY, angle, opts = {}) {
+  const { count = CONFIG.sprayParticleCount, ...particleOpts } = opts;
   resizeSprayCanvas();
-  for (let i = 0; i < CONFIG.sprayParticleCount; i++) {
-    sprayParticles.push(createSprayParticle(originX, originY, angle));
+  for (let i = 0; i < count; i++) {
+    sprayParticles.push(createSprayParticle(originX, originY, angle, particleOpts));
   }
   if (!sprayAnimId) animateSpray();
 }
 
+const PITCHKARI_SHOTS = [
+  {
+    anchorX: 0.15,
+    anchorY: 0.68,
+    rotation: 52,
+    scale: 1.34,
+    recoil: 13,
+    thrust: 22,
+    splash: {
+      src: 'assets/pink dust.png',
+      size: 444,
+      travel: 72,
+      scaleTo: 0.92,
+      opacity: 0.92,
+    },
+  },
+  {
+    anchorX: 0.5,
+    anchorY: 0.91,
+    rotation: 0,
+    scale: 1.38,
+    recoil: 15,
+    thrust: 24,
+    splash: {
+      src: 'assets/yellow dust.png',
+      size: 438,
+      travel: 76,
+      scaleTo: 0.94,
+      opacity: 0.94,
+    },
+  },
+  {
+    anchorX: 0.85,
+    anchorY: 0.67,
+    rotation: -72,
+    scale: 1.34,
+    recoil: 13,
+    thrust: 21,
+    splash: {
+      src: 'assets/blue dust.png',
+      size: 454,
+      travel: 225,
+      scaleTo: 0.93,
+      opacity: 0.9,
+    },
+  },
+];
+const PITCHKARI_OVERLAY_SCALE_FACTOR = 0.8;
 
-/* ================================================================
-   COLOR BURST (for Gulal)
-   ================================================================ */
-let burstParticles = [];
-let burstAnimId = null;
+function getPichkariNozzlePoint(el, angleOffset = 0) {
+  const rect = el.getBoundingClientRect();
+  const centerX = rect.left + rect.width * 0.5;
+  const centerY = rect.top + rect.height * 0.5;
+  const rotationDeg = Number(gsap.getProperty(el, 'rotation')) || 0;
+  const rotationRad = (rotationDeg * Math.PI) / 180;
+  const dirX = Math.sin(rotationRad);
+  const dirY = -Math.cos(rotationRad);
+  const nozzleDistance = rect.height * 0.42;
 
-function createBurstParticle(cx, cy) {
-  const angle = Math.random() * Math.PI * 2;
-  const speed = 3 + Math.random() * 15;
-  const color = HOLI_COLORS[Math.floor(Math.random() * HOLI_COLORS.length)];
   return {
-    x: cx + (Math.random() - 0.5) * 40,
-    y: cy + (Math.random() - 0.5) * 40,
-    vx: Math.cos(angle) * speed,
-    vy: Math.sin(angle) * speed - Math.random() * 4,
-    size: 1.5 + Math.random() * 4,
-    color, alpha: 0.8 + Math.random() * 0.2,
-    gravity: 0.04 + Math.random() * 0.04,
-    friction: 0.98, life: 1,
-    decay: 0.004 + Math.random() * 0.008,
+    x: centerX + (dirX * nozzleDistance),
+    y: centerY + (dirY * nozzleDistance),
+    angle: Math.atan2(dirY, dirX) + angleOffset,
+    dirX,
+    dirY,
   };
 }
 
-function animateBurst() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  sprayCtx.clearRect(0, 0, w, h);
+function spawnImageSplash(x, y, angle, opts = {}) {
+  const {
+    src = '',
+    size = 340,
+    travel = 70,
+    scaleFrom = 0.2,
+    scaleTo = 0.94,
+    opacity = 0.92,
+    fadeIn = 0.08,
+    hold = 0.06,
+    fadeOut = 0.24,
+    rotateJitter = 14,
+  } = opts;
+  if (!src) return;
 
-  for (let i = burstParticles.length - 1; i >= 0; i--) {
-    const p = burstParticles[i];
-    p.vy += p.gravity;
-    p.vx *= p.friction;
-    p.vy *= p.friction;
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life -= p.decay;
-    p.alpha = Math.max(0, p.life);
+  const splash = document.createElement('img');
+  splash.className = 'splash';
+  splash.src = src;
+  splash.alt = '';
+  splash.setAttribute('aria-hidden', 'true');
+  splash.style.left = `${x}px`;
+  splash.style.top = `${y}px`;
+  splash.style.width = `${size}px`;
+  splash.style.height = `${size}px`;
+  document.body.appendChild(splash);
 
-    if (p.life <= 0) { burstParticles.splice(i, 1); continue; }
+  const moveX = Math.cos(angle) * travel;
+  const moveY = Math.sin(angle) * travel;
+  const baseRotation = (Math.random() - 0.5) * rotateJitter;
 
-    sprayCtx.globalAlpha = p.alpha;
-    sprayCtx.fillStyle = p.color;
-    sprayCtx.beginPath();
-    sprayCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    sprayCtx.fill();
-  }
-  sprayCtx.globalAlpha = 1;
+  gsap.set(splash, {
+    xPercent: -50,
+    yPercent: -50,
+    rotation: baseRotation,
+    scale: scaleFrom,
+    opacity: 0,
+  });
 
-  if (burstParticles.length > 0) {
-    burstAnimId = requestAnimationFrame(animateBurst);
-  } else {
-    burstAnimId = null;
-  }
+  const tl = gsap.timeline({ onComplete: () => splash.remove() });
+  tl.to(splash, {
+    opacity,
+    scale: scaleTo,
+    duration: fadeIn,
+    ease: 'power2.out',
+  });
+  tl.to(splash, {
+    x: moveX,
+    y: moveY,
+    duration: fadeIn + hold + fadeOut,
+    ease: 'power2.out',
+  }, 0);
+  tl.to(splash, {
+    opacity: 0,
+    scale: scaleTo * 1.06,
+    duration: fadeOut,
+    ease: 'power2.in',
+  }, fadeIn + hold);
 }
 
-function triggerColorBurst(element) {
-  resizeSprayCanvas();
-  const rect = element.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  for (let i = 0; i < 3000; i++) {
-    burstParticles.push(createBurstParticle(cx, cy));
+function triggerPitchkariSplash(el, splashConfig = {}) {
+  const { x, y, angle } = getPichkariNozzlePoint(el);
+  spawnImageSplash(x, y, angle, splashConfig);
+  spawnImageSplash(x, y, angle - 0.24, {
+    ...splashConfig,
+    size: Math.round((splashConfig.size || 340) * 0.68),
+    travel: (splashConfig.travel || 70) * 0.85,
+    scaleTo: (splashConfig.scaleTo || 0.94) * 0.82,
+    opacity: Math.min(1, (splashConfig.opacity || 0.92) * 0.8),
+    fadeIn: 0.06,
+    hold: 0.04,
+    fadeOut: 0.2,
+    rotateJitter: 20,
+  });
+}
+
+function getPichkariShotTarget(sourceRect, shot) {
+  const sourceCx = sourceRect.left + sourceRect.width * 0.5;
+  const sourceCy = sourceRect.top + sourceRect.height * 0.5;
+  return {
+    x: window.innerWidth * shot.anchorX - sourceCx,
+    y: window.innerHeight * shot.anchorY - sourceCy,
+  };
+}
+
+function addPitchkariShot(tl, overlayEl, suspensionEl, shot) {
+  const baseScale = (shot.scale || 1.34) * PITCHKARI_OVERLAY_SCALE_FACTOR;
+  const rotationRad = (shot.rotation * Math.PI) / 180;
+  const dirX = Math.sin(rotationRad);
+  const dirY = -Math.cos(rotationRad);
+  const recoil = shot.recoil ?? 13;
+  const thrust = shot.thrust ?? 22;
+
+  const recoilX = shot.x - (dirX * recoil);
+  const recoilY = shot.y - (dirY * recoil);
+  const thrustX = shot.x + (dirX * thrust);
+  const thrustY = shot.y + (dirY * thrust);
+
+  tl.to(overlayEl, {
+    x: recoilX,
+    y: recoilY,
+    rotation: shot.rotation,
+    scaleX: baseScale * 1.08,
+    scaleY: baseScale * 0.86,
+    duration: 0.15,
+    ease: 'power2.in',
+  });
+
+  if (suspensionEl) {
+    tl.to(suspensionEl, {
+      scaleY: 0.76,
+      y: 10,
+      duration: 0.15,
+      ease: 'power2.in',
+      transformOrigin: '50% 100%',
+    }, '<');
   }
-  if (!burstAnimId) animateBurst();
+
+  tl.to(overlayEl, {
+    x: thrustX,
+    y: thrustY,
+    rotation: shot.rotation,
+    scaleX: baseScale * 0.96,
+    scaleY: baseScale * 1.08,
+    duration: 0.14,
+    ease: 'power3.out',
+    onStart: () => triggerPitchkariSplash(overlayEl, shot.splash),
+  });
+
+  if (suspensionEl) {
+    tl.to(suspensionEl, {
+      scaleY: 1.1,
+      y: -3,
+      duration: 0.14,
+      ease: 'power2.out',
+      transformOrigin: '50% 100%',
+    }, '<');
+  }
+
+  tl.to(overlayEl, {
+    x: shot.x,
+    y: shot.y,
+    rotation: shot.rotation,
+    scaleX: baseScale,
+    scaleY: baseScale,
+    duration: 0.17,
+    ease: 'sine.out',
+  });
+
+  if (suspensionEl) {
+    tl.to(suspensionEl, {
+      scaleY: 1,
+      y: 0,
+      duration: 0.17,
+      ease: 'sine.out',
+      transformOrigin: '50% 100%',
+    }, '<');
+  }
+
+  tl.to({}, { duration: 0.06 });
+}
+
+function addPitchkariSuspensionImage(overlayEl) {
+  const candidates = CONFIG.pitchkariSuspensionAssetCandidates || [];
+  if (!candidates.length) return null;
+
+  const suspension = document.createElement('img');
+  suspension.className = 'pitchkari-overlay-suspension';
+  suspension.alt = '';
+  suspension.setAttribute('aria-hidden', 'true');
+
+  let index = 0;
+  const tryNext = () => {
+    if (index >= candidates.length) {
+      suspension.remove();
+      return;
+    }
+    suspension.src = candidates[index];
+    index += 1;
+  };
+
+  suspension.onerror = () => tryNext();
+  overlayEl.appendChild(suspension);
+  tryNext();
+  return suspension;
+}
+
+function createPitchkariOverlay(sourceEl) {
+  const sourceRect = sourceEl.getBoundingClientRect();
+  const sourceImg = sourceEl.querySelector('.asset-img');
+
+  const overlayEl = document.createElement('div');
+  overlayEl.className = 'pitchkari-overlay-clone';
+  overlayEl.style.left = `${sourceRect.left}px`;
+  overlayEl.style.top = `${sourceRect.top}px`;
+  overlayEl.style.width = `${sourceRect.width}px`;
+  overlayEl.style.height = `${sourceRect.height}px`;
+
+  const suspensionEl = addPitchkariSuspensionImage(overlayEl);
+
+  const img = document.createElement('img');
+  img.className = 'pitchkari-overlay-img';
+  img.src = sourceImg?.getAttribute('src') || 'assets/pichkari.png';
+  img.alt = 'Pichkari';
+  overlayEl.appendChild(img);
+
+  document.body.appendChild(overlayEl);
+  return { overlayEl, suspensionEl, sourceRect };
+}
+
+
+/* ================================================================
+   GULAL DUST CLOUD (pink dust sprite animation)
+   ================================================================ */
+const GULAL_DUST_SOURCES = [
+  'assets/pinkdust.png',
+  'assets/yellow dust.png',
+  'assets/blue dust.png',
+];
+const gulalDustPreloadImgs = GULAL_DUST_SOURCES.map((src) => {
+  const img = new Image();
+  img.src = src;
+  return img;
+});
+
+function createGulalDustCloudTimeline(originEl) {
+  const rect = originEl?.getBoundingClientRect?.();
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const viewportMin = Math.min(window.innerWidth, window.innerHeight);
+  const layer = document.createElement('div');
+  layer.className = 'gulal-dust-layer';
+  document.body.appendChild(layer);
+
+  const baseWidth = rect?.width || viewportMin * 0.25;
+  const baseSize = Math.max(viewportMin * 0.45, baseWidth * 1.55);
+  const coverAnchors = [
+    { x: 0.08, y: 0.1 }, { x: 0.5, y: 0.04 }, { x: 0.92, y: 0.12 },
+    { x: 0.04, y: 0.46 }, { x: 0.95, y: 0.45 }, { x: 0.08, y: 0.86 },
+    { x: 0.48, y: 0.94 }, { x: 0.92, y: 0.88 }, { x: 0.5, y: 0.5 },
+  ];
+  const clouds = [];
+
+  coverAnchors.forEach((anchor, index) => {
+    const sprite = document.createElement('img');
+    sprite.className = 'gulal-dust-cloud';
+    sprite.src = GULAL_DUST_SOURCES[index % GULAL_DUST_SOURCES.length];
+    sprite.alt = '';
+    sprite.setAttribute('aria-hidden', 'true');
+
+    const size = baseSize * (0.72 + Math.random() * 0.42);
+    const baseX = -size / 2;
+    const baseY = -size / 2;
+    const targetX = window.innerWidth * anchor.x - cx - size / 2;
+    const targetY = window.innerHeight * anchor.y - cy - size / 2;
+
+    sprite.style.left = `${cx}px`;
+    sprite.style.top = `${cy}px`;
+    sprite.style.width = `${size}px`;
+    sprite.style.height = `${size}px`;
+    layer.appendChild(sprite);
+
+    gsap.set(sprite, {
+      x: baseX,
+      y: baseY,
+      scale: 0.16,
+      opacity: 0,
+      rotation: (Math.random() - 0.5) * 18,
+      transformOrigin: '50% 50%',
+    });
+
+    clouds.push({
+      sprite,
+      coverX: targetX,
+      coverY: targetY,
+      coverScale: 1.92 + Math.random() * 0.72,
+    });
+  });
+
+  const tl = gsap.timeline({ onComplete: () => layer.remove() });
+
+  clouds.forEach((cloud, index) => {
+    tl.to(cloud.sprite, {
+      opacity: 0.82,
+      scale: 0.94,
+      duration: 0.18,
+      ease: 'power2.out',
+    }, index * 0.026);
+  });
+
+  clouds.forEach((cloud, index) => {
+    tl.to(cloud.sprite, {
+      x: cloud.coverX,
+      y: cloud.coverY,
+      scale: cloud.coverScale,
+      opacity: 0.84,
+      duration: 0.56,
+      ease: 'power2.inOut',
+    }, 0.14 + index * 0.01);
+  });
+
+  tl.to({}, { duration: 0.14 });
+
+  clouds.forEach((cloud, index) => {
+    tl.to(cloud.sprite, {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.in',
+    }, 0.84 + index * 0.012);
+  });
+
+  return tl;
 }
 
 
@@ -274,14 +646,83 @@ function bringToFront(asset) {
   activeAsset = asset;
   asset.style.zIndex = 50;
   asset.classList.add('interacting');
-  assetBackdrop.classList.add('active');
 }
 
 function resetAsset(asset) {
   asset.style.zIndex = '';
   asset.classList.remove('interacting');
-  assetBackdrop.classList.remove('active');
   activeAsset = null;
+}
+
+function triggerPinkDustPopupFromShake() {
+  if (activeAsset) return;
+  const now = Date.now();
+  if (now - shakeLastTriggerAt < SHAKE_CONFIG.cooldownMs) return;
+  shakeLastTriggerAt = now;
+  createGulalDustCloudTimeline(assetGulal);
+}
+
+function handleDeviceMotion(event) {
+  const acc = event.accelerationIncludingGravity || event.acceleration;
+  if (!acc) return;
+
+  const x = Number.isFinite(acc.x) ? acc.x : 0;
+  const y = Number.isFinite(acc.y) ? acc.y : 0;
+  const z = Number.isFinite(acc.z) ? acc.z : 0;
+  const now = event.timeStamp || performance.now();
+
+  if (!shakeLastMotion.time) {
+    shakeLastMotion = { x, y, z, time: now };
+    return;
+  }
+
+  const dt = now - shakeLastMotion.time;
+  if (dt < SHAKE_CONFIG.minIntervalMs) return;
+
+  const delta = Math.abs(x - shakeLastMotion.x) + Math.abs(y - shakeLastMotion.y) + Math.abs(z - shakeLastMotion.z);
+  const speed = (delta / dt) * 1000;
+  shakeLastMotion = { x, y, z, time: now };
+
+  if (speed > SHAKE_CONFIG.speedThreshold) {
+    triggerPinkDustPopupFromShake();
+  }
+}
+
+function startShakeListener() {
+  if (shakeListenerStarted || !window.DeviceMotionEvent) return;
+  window.addEventListener('devicemotion', handleDeviceMotion, { passive: true });
+  shakeListenerStarted = true;
+}
+
+function requestMotionPermissionAndStart() {
+  if (!window.DeviceMotionEvent || shakePermissionRequested || shakeListenerStarted) return;
+  shakePermissionRequested = true;
+
+  if (typeof window.DeviceMotionEvent.requestPermission !== 'function') {
+    startShakeListener();
+    return;
+  }
+
+  window.DeviceMotionEvent.requestPermission()
+    .then((state) => {
+      if (state === 'granted') startShakeListener();
+    })
+    .catch(() => {
+      // Permission denied or unavailable; keep interaction silent.
+    });
+}
+
+function setupShakeDetection() {
+  if (!window.DeviceMotionEvent) return;
+
+  if (typeof window.DeviceMotionEvent.requestPermission === 'function') {
+    const tryEnable = () => requestMotionPermissionAndStart();
+    window.addEventListener('pointerdown', tryEnable, { once: true, passive: true });
+    window.addEventListener('touchstart', tryEnable, { once: true, passive: true });
+    return;
+  }
+
+  startShakeListener();
 }
 
 
@@ -293,74 +734,310 @@ $('#assetPichkari').addEventListener('click', () => {
   const el = $('#assetPichkari');
   bringToFront(el);
 
-  const rect = el.getBoundingClientRect();
-  const nozzleX = rect.left + rect.width * 0.8;
-  const nozzleY = rect.top + rect.height * 0.3;
+  const { overlayEl, suspensionEl, sourceRect } = createPitchkariOverlay(el);
+  const sourceOpacity = el.style.opacity;
+  el.style.opacity = '0';
 
-  const tl = gsap.timeline({ onComplete: () => resetAsset(el) });
+  const shots = PITCHKARI_SHOTS.map((shot) => ({
+    ...shot,
+    ...getPichkariShotTarget(sourceRect, shot),
+  }));
 
-  tl.to(el, { scale: 1.3, rotation: 0, duration: 0.3, ease: 'back.out(1.5)' });
+  const tl = gsap.timeline({
+    onComplete: () => {
+      overlayEl.remove();
+      el.style.opacity = sourceOpacity;
+      resetAsset(el);
+    },
+  });
 
-  tl.call(() => sprayWater(nozzleX, nozzleY, Math.PI));
-  tl.to(el, { rotation: -15, duration: 0.2 });
-  tl.to(el, { x: -5, duration: 0.1 });
-  tl.to(el, { x: 0, duration: 0.1 });
-  tl.to({}, { duration: 0.3 });
+  gsap.set(overlayEl, {
+    scaleX: PITCHKARI_OVERLAY_SCALE_FACTOR,
+    scaleY: PITCHKARI_OVERLAY_SCALE_FACTOR,
+  });
 
-  tl.call(() => sprayWater(nozzleX, nozzleY, -Math.PI * 0.7));
-  tl.to(el, { rotation: 10, duration: 0.25 });
-  tl.to(el, { x: -5, duration: 0.1 });
-  tl.to(el, { x: 0, duration: 0.1 });
-  tl.to({}, { duration: 0.3 });
+  shots.forEach((shot, index) => {
+    tl.to(overlayEl, {
+      x: shot.x,
+      y: shot.y,
+      rotation: shot.rotation,
+      scaleX: shot.scale * PITCHKARI_OVERLAY_SCALE_FACTOR,
+      scaleY: shot.scale * PITCHKARI_OVERLAY_SCALE_FACTOR,
+      duration: index === 0 ? 0.26 : 0.22,
+      ease: index === 0 ? 'power3.out' : 'power2.inOut',
+    });
 
-  tl.call(() => sprayWater(nozzleX, nozzleY, -Math.PI / 2));
-  tl.to(el, { rotation: -5, duration: 0.2 });
-  tl.to(el, { x: -5, duration: 0.1 });
-  tl.to(el, { x: 0, duration: 0.1 });
-  tl.to({}, { duration: 0.5 });
+    if (suspensionEl) {
+      tl.to(suspensionEl, {
+        scaleY: 1,
+        y: 0,
+        duration: 0.12,
+        ease: 'power1.out',
+        transformOrigin: '50% 100%',
+      }, '<');
+    }
 
-  tl.to(el, { scale: 1, rotation: -15, x: 0, y: 0, duration: 0.4, ease: 'power2.inOut' });
+    addPitchkariShot(tl, overlayEl, suspensionEl, shot);
+  });
+
+  tl.to({}, { duration: 0.12 });
+  tl.to(overlayEl, {
+    x: 0,
+    y: 0,
+    rotation: 0,
+    scaleX: 1,
+    scaleY: 1,
+    duration: 0.34,
+    ease: 'power2.inOut',
+  });
 });
 
 
 /* ================================================================
-   ASSET: GUJIYA
+   ASSET: GUJIYA  — circle-mask eat animation
    ================================================================ */
-$('#assetGujiya').addEventListener('click', () => {
-  if (activeAsset) return;
-  const el = $('#assetGujiya');
-  bringToFront(el);
 
+/**
+ * Draws the current bite state onto the overlay canvas.
+ * bites = [{ x, y, r }]  — all in canvas-pixel space (already × dpr)
+ */
+function drawGujiyaFrame(ctx, img, w, h, bites, drawRectOverride = null) {
+  ctx.clearRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'source-over';
+  const drawRect = drawRectOverride || getGujiyaDrawRect(w, h, img);
+  ctx.drawImage(img, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+
+  if (bites.length === 0) return;
+
+  ctx.globalCompositeOperation = 'destination-out';
+  for (const b of bites) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function solveUnrotatedBounds(boundsW, boundsH, rotationDeg) {
+  const normalized = Math.abs(rotationDeg % 180);
+  const theta = normalized > 90 ? 180 - normalized : normalized;
+  const rad = theta * (Math.PI / 180);
+  const c = Math.cos(rad);
+  const s = Math.sin(rad);
+  const denom = (c * c) - (s * s);
+
+  if (Math.abs(denom) < 0.001) return null;
+
+  const rawW = ((boundsW * c) - (boundsH * s)) / denom;
+  const rawH = ((boundsH * c) - (boundsW * s)) / denom;
+  if (!Number.isFinite(rawW) || !Number.isFinite(rawH)) return null;
+  if (rawW <= 0 || rawH <= 0) return null;
+
+  return { w: rawW, h: rawH };
+}
+
+function getGujiyaDrawRect(containerW, containerH, img, rotationDeg = 0) {
+  let targetW = containerW;
+  let targetH = containerH;
+
+  const solved = solveUnrotatedBounds(containerW, containerH, rotationDeg);
+  if (solved) {
+    targetW = Math.min(containerW, solved.w);
+    targetH = Math.min(containerH, solved.h);
+  }
+
+  const sourceW = img.naturalWidth || targetW;
+  const sourceH = img.naturalHeight || targetH;
+  const sourceAspect = sourceW / sourceH;
+  const targetAspect = targetW / targetH;
+
+  let drawW;
+  let drawH;
+  if (sourceAspect > targetAspect) {
+    drawW = targetW;
+    drawH = targetW / sourceAspect;
+  } else {
+    drawH = targetH;
+    drawW = targetH * sourceAspect;
+  }
+
+  return {
+    x: (containerW - drawW) / 2,
+    y: (containerH - drawH) / 2,
+    w: drawW,
+    h: drawH,
+  };
+}
+
+function startCircleMaskAnimation(el, onComplete, sourceImgSrc = 'assets/gujiya.png') {
+  const dpr = window.devicePixelRatio || 1;
   const rect = el.getBoundingClientRect();
-  const centerX = window.innerWidth / 2 - rect.left - rect.width / 2;
-  const centerY = window.innerHeight / 2 - rect.top - rect.height / 2;
+  const cssW = rect.width;
+  const cssH = rect.height;
+  const currentRotation = Number(gsap.getProperty(el, 'rotation')) || 0;
+  const pxW = Math.round(cssW * dpr);
+  const pxH = Math.round(cssH * dpr);
 
-  const tl = gsap.timeline({ onComplete: () => resetAsset(el) });
+  /* --- overlay canvas, exactly over the centred gujiya --- */
+  const oc = document.createElement('canvas');
+  oc.width = pxW;
+  oc.height = pxH;
+  oc.style.cssText = `
+    position: fixed;
+    left: ${rect.left}px;
+    top:  ${rect.top}px;
+    width:  ${cssW}px;
+    height: ${cssH}px;
+    pointer-events: none;
+    z-index: 55;
+    transform-origin: 50% 50%;
+  `;
+  document.body.appendChild(oc);
+  const ctx = oc.getContext('2d');
+  if (!ctx) {
+    oc.remove();
+    onComplete();
+    return;
+  }
+  ctx.scale(dpr, dpr);
 
-  tl.to(el, { x: centerX, y: centerY, scale: 1.8, duration: 0.5, ease: 'power2.out' });
+  /* hide the real element — canvas is the visual now */
+  el.style.opacity = '0';
 
-  tl.to(el, { rotation: -5, duration: 0.08 });
-  tl.to(el, { rotation: 5, duration: 0.08 });
-  tl.to(el, { rotation: 0, duration: 0.08 });
-  tl.to(el, { clipPath: 'inset(0 25% 0 0)', duration: 0.2 });
-  tl.to({}, { duration: 0.4 });
+  const img = new Image();
+  img.onload = () => {
+    const drawRect = getGujiyaDrawRect(cssW, cssH, img, currentRotation);
 
-  tl.to(el, { rotation: -4, duration: 0.08 });
-  tl.to(el, { rotation: 4, duration: 0.08 });
-  tl.to(el, { rotation: 0, duration: 0.08 });
-  tl.to(el, { clipPath: 'inset(0 55% 0 0)', duration: 0.2 });
-  tl.to({}, { duration: 0.4 });
+    /* initial draw */
+    drawGujiyaFrame(ctx, img, cssW, cssH, [], drawRect);
 
-  tl.to(el, { rotation: -3, duration: 0.08 });
-  tl.to(el, { rotation: 3, duration: 0.08 });
-  tl.to(el, { rotation: 0, duration: 0.08 });
-  tl.to(el, { clipPath: 'inset(0 85% 0 0)', duration: 0.2 });
-  tl.to({}, { duration: 0.3 });
+    /* two edge bites, then full final bite */
+    const biteConfig = [
+      {
+        cx: drawRect.x + (drawRect.w * 0.74),
+        cy: drawRect.y + (drawRect.h * 0.33),
+        maxR: drawRect.w * 0.13,
+        shakeX: 4,
+        duration: 0.24,
+        pauseAfter: 0.12,
+      },
+      {
+        cx: drawRect.x + (drawRect.w * 0.56),
+        cy: drawRect.y + (drawRect.h * 0.22),
+        maxR: drawRect.w * 0.14,
+        shakeX: -3,
+        duration: 0.24,
+        pauseAfter: 0.12,
+      },
+      {
+        cx: drawRect.x + (drawRect.w * 0.5),
+        cy: drawRect.y + (drawRect.h * 0.5),
+        maxR: (Math.hypot(drawRect.w, drawRect.h) / 2) + 4, // covers full image by the 3rd bite
+        shakeX: 1,
+        duration: 0.3,
+        pauseAfter: 0.24, // 200-300ms pause after final bite
+      },
+    ];
+    const activeBites = [];
+    const biteTimeline = gsap.timeline({
+      delay: 0.36, // 300-500ms intact pause before munching starts
+      onComplete: () => {
+        oc.remove();
+        onComplete();
+      },
+    });
 
-  tl.to(el, { opacity: 0, scale: 0.5, duration: 0.3 });
-  tl.set(el, { x: 0, y: 0, scale: 1, rotation: 0, clipPath: 'inset(0 0 0 0)', opacity: 0 });
-  tl.to(el, { opacity: 1, duration: 0.5, ease: 'back.out(1.5)' });
-});
+    biteConfig.forEach((cfg, index) => {
+      biteTimeline.call(() => {
+        const bite = { x: cfg.cx, y: cfg.cy, r: 0 };
+        activeBites.push(bite);
+
+        gsap.to(bite, {
+          r: cfg.maxR,
+          duration: cfg.duration,
+          ease: 'power2.out',
+          onUpdate: () => drawGujiyaFrame(ctx, img, cssW, cssH, activeBites, drawRect),
+        });
+
+        gsap.fromTo(
+          oc,
+          { x: 0, y: 0, scale: 1 },
+          {
+            x: cfg.shakeX,
+            y: -2,
+            scale: index === biteConfig.length - 1 ? 1.02 : 1.04,
+            duration: 0.09,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: 1,
+            immediateRender: false,
+          },
+        );
+      });
+      biteTimeline.to({}, { duration: cfg.duration + cfg.pauseAfter });
+    });
+  };
+
+  img.onerror = () => {
+    oc.remove();
+    onComplete();
+  };
+  img.src = sourceImgSrc || 'assets/gujiya.png';
+}
+
+function bindGujiyaInteraction(el) {
+  if (!el) return;
+
+  el.addEventListener('click', () => {
+    if (activeAsset) return;
+    bringToFront(el);
+
+    const sourceImgSrc = el.querySelector('.asset-img')?.getAttribute('src') || 'assets/gujiya.png';
+    const baseRotation = Number(gsap.getProperty(el, 'rotation')) || 0;
+    const baseScaleX = Number(gsap.getProperty(el, 'scaleX')) || 1;
+    const baseScaleY = Number(gsap.getProperty(el, 'scaleY')) || 1;
+
+    /* compensate for parent zoom scale so centre landing is accurate on screen */
+    const startRect = el.getBoundingClientRect();
+    const wrapperRect = boxWrapper.getBoundingClientRect();
+    const wrapperScale = wrapperRect.width / (boxWrapper.offsetWidth || wrapperRect.width || 1);
+    const centerX = (window.innerWidth / 2 - startRect.left - startRect.width / 2) / wrapperScale;
+    const centerY = (window.innerHeight / 2 - startRect.top - startRect.height / 2) / wrapperScale;
+
+    const tl = gsap.timeline();
+
+    /* ── 1. Fly to centre, soft ease-out settle ── */
+    tl.to(el, {
+      x: centerX,
+      y: centerY,
+      scale: 1.26,
+      duration: 0.45,
+      ease: 'power2.out',
+    });
+    tl.to(el, {
+      scale: 1.296,
+      duration: 0.18,
+      ease: 'back.out(2.2)',
+    });
+
+    /* ── 2. Hand off to circle-mask canvas ── */
+    tl.call(() => {
+      startCircleMaskAnimation(el, () => {
+        gsap.set(el, {
+          x: 0,
+          y: 0,
+          scaleX: baseScaleX,
+          scaleY: baseScaleY,
+          rotation: baseRotation,
+          opacity: 1,
+        });
+        resetAsset(el);
+      }, sourceImgSrc);
+    });
+  });
+}
+
+$$('.asset-gujiya').forEach(bindGujiyaInteraction);
 
 
 /* ================================================================
@@ -371,19 +1048,68 @@ $('#assetGulal').addEventListener('click', () => {
   const el = $('#assetGulal');
   bringToFront(el);
 
-  const tl = gsap.timeline({ onComplete: () => resetAsset(el) });
+  const imgEl = el.querySelector('.asset-img');
+  const startRect = el.getBoundingClientRect();
+  const startCX = startRect.left + startRect.width / 2;
+  const startCY = startRect.top + startRect.height / 2;
+  const targetCX = window.innerWidth / 2;
+  const targetCY = window.innerHeight / 2;
 
-  tl.to(el, { scale: 1.15, duration: 0.15, ease: 'power2.out' });
-  tl.call(() => triggerColorBurst(el));
+  const overlay = document.createElement('img');
+  overlay.className = 'gulal-overlay-clone';
+  overlay.alt = '';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.src = imgEl?.currentSrc || imgEl?.src || 'assets/gulal.png';
+  overlay.style.width = `${startRect.width}px`;
+  overlay.style.height = `${startRect.height}px`;
+  overlay.style.left = `${startCX}px`;
+  overlay.style.top = `${startCY}px`;
+  document.body.appendChild(overlay);
+  gsap.set(overlay, { xPercent: -50, yPercent: -50 });
 
-  tl.to(el, { rotation: -8, duration: 0.06 });
-  tl.to(el, { rotation: 8, duration: 0.06 });
-  tl.to(el, { rotation: -5, duration: 0.06 });
-  tl.to(el, { rotation: 5, duration: 0.06 });
-  tl.to(el, { rotation: 0, duration: 0.08 });
+  el.style.opacity = '0';
 
-  tl.to({}, { duration: 1.5 });
-  tl.to(el, { scale: 1, rotation: 0, duration: 0.3, ease: 'power2.inOut' });
+  const reducedScale = 1.96 * 0.7 * 0.9; // 10% smaller than current centered size
+  const maxFitScale = Math.min(
+    (window.innerWidth * 0.72) / startRect.width,
+    (window.innerHeight * 0.52) / startRect.height,
+  );
+  const centerScale = Math.max(0.9, Math.min(reducedScale, maxFitScale));
+  const approachScale = centerScale * 0.95;
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      overlay.remove();
+      el.style.opacity = '';
+      resetAsset(el);
+    },
+  });
+
+  tl.to(overlay, {
+    left: targetCX,
+    top: targetCY,
+    scale: approachScale,
+    duration: 0.42,
+    ease: 'power3.out',
+  });
+  tl.to(overlay, { scale: centerScale, duration: 0.2, ease: 'back.out(1.9)' });
+
+  tl.call(() => {
+    createGulalDustCloudTimeline(overlay);
+  });
+  tl.to(overlay, { rotation: -7, duration: 0.08, ease: 'sine.inOut' }, '<0.04');
+  tl.to(overlay, { rotation: 6, duration: 0.08, ease: 'sine.inOut' });
+  tl.to(overlay, { rotation: 0, duration: 0.1, ease: 'sine.out' });
+
+  tl.to({}, { duration: 0.06 });
+  tl.to(overlay, {
+    left: startCX,
+    top: startCY,
+    scale: 1,
+    rotation: 0,
+    duration: 0.36,
+    ease: 'power2.inOut',
+  });
 });
 
 
@@ -392,3 +1118,4 @@ $('#assetGulal').addEventListener('click', () => {
    ================================================================ */
 window.addEventListener('resize', resizeSprayCanvas);
 resizeSprayCanvas();
+setupShakeDetection();
