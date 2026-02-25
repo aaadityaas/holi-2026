@@ -80,8 +80,11 @@ function playIntro() {
     ease: 'back.out(1.2)',
   });
 
-  // Step 2: Brief pause
-  tl.to({}, { duration: 0.5 });
+  // Step 2: Box shakes twice
+  tl.to(boxWrapper, { rotation: 3, x: 5, duration: 0.08, yoyo: true, repeat: 5, ease: 'sine.inOut' });
+  tl.to({}, { duration: 0.25 }); // brief pause
+  tl.to(boxWrapper, { rotation: -3, x: -5, duration: 0.08, yoyo: true, repeat: 5, ease: 'sine.inOut' });
+  tl.to({}, { duration: 0.4 }); // pause before opening lid
 
   // Step 3: Lid rotates and slides off to the left
   tl.to(boxLid, {
