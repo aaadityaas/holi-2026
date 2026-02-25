@@ -85,6 +85,32 @@ function playIntro() {
     duration: 1.2,
     ease: 'power2.inOut',
   }, '-=0.3');
+
+  // Move assets to "viewport fit" positions during the zoom
+  tl.to('#assetGujiya', {
+    left: '-15%',
+    bottom: '25%',
+    scale: 1.2,
+    duration: 1.2,
+    ease: 'power2.inOut',
+  }, '<');
+
+  tl.to('#assetPichkari', {
+    right: '-8%',
+    top: '30%',
+    rotation: -10,
+    scale: 1.3,
+    duration: 1.2,
+    ease: 'power2.inOut',
+  }, '<');
+
+  tl.to('#assetGulal', {
+    right: '-5%',
+    bottom: '-5%',
+    scale: 1.1,
+    duration: 1.2,
+    ease: 'power2.inOut',
+  }, '<');
 }
 
 playIntro();

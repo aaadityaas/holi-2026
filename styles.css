@@ -116,8 +116,6 @@ body {
   position: absolute;
   inset: 0;
   z-index: 3;
-  overflow: hidden;
-  border-radius: 21px;
 }
 
 .asset {
@@ -142,10 +140,10 @@ body {
 /* ===== Letter (center, CSS-styled paper) ===== */
 .asset-letter {
   position: absolute;
-  top: 8%;
-  left: 48%;
-  transform: translateX(-50%) rotate(-5deg);
-  width: 65%;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  width: 60%;
   aspect-ratio: 37 / 55;
   z-index: 2;
   cursor: default;
@@ -163,30 +161,30 @@ body {
 
 /* ===== Gujiya (bottom-left, overlapping letter) ===== */
 .asset-gujiya {
-  bottom: 12%;
-  left: -8%;
+  bottom: 18%;
+  left: -5%;
   width: 40%;
   z-index: 4;
 }
 
 /* ===== Pichkari (right side, overlapping letter diagonally) ===== */
 .asset-pichkari {
-  top: 15%;
-  right: -10%;
-  width: 35%;
-  transform: rotate(-30deg);
+  top: 18%;
+  right: 5%;
+  width: 28%;
+  transform: rotate(-15deg);
   z-index: 4;
 }
 
 .asset-pichkari:active {
-  transform: rotate(-30deg) scale(0.93);
+  transform: rotate(-15deg) scale(0.93);
 }
 
 /* ===== Gulal (bottom-right, overlapping letter) ===== */
 .asset-gulal {
-  bottom: 5%;
-  right: 8%;
-  width: 30%;
+  bottom: 0%;
+  right: 0%;
+  width: 42%;
   z-index: 4;
 }
 
