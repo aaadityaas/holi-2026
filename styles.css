@@ -235,12 +235,12 @@ body {
   top: 18%;
   right: 5%;
   width: 28%;
-  transform: rotate(-15deg);
+  transform: rotate(0deg);
   z-index: 4;
 }
 
 .asset-pichkari:active {
-  transform: rotate(-15deg) scale(0.93);
+  transform: rotate(0deg) scale(0.93);
 }
 
 /* ===== Gulal (bottom-right, overlapping letter) ===== */
