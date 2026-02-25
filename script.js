@@ -83,7 +83,7 @@ function playIntro() {
     scale: targetScale,
     duration: 1.2,
     ease: 'back.out(2)',
-  }, '-=0.3');
+  }, '+=0.5');
 
   // Move assets to "viewport fit" positions during the zoom
   tl.to('#assetGujiya', {
