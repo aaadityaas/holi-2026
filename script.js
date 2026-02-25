@@ -5,7 +5,7 @@
 
 const CONFIG = {
   userName: 'Anoop',
-  introDelay: 0.5,
+  introDelay: 2.5,
   sprayParticleCount: 80,
 };
 
@@ -57,7 +57,7 @@ function getTargetScale() {
    DUST PARTICLES (Scene 1)
    ================================================================ */
 function initDust() {
-  const particleCount = 8;
+  const particleCount = 16;
   const w = window.innerWidth;
   const h = window.innerHeight;
 
@@ -65,37 +65,57 @@ function initDust() {
     const el = document.createElement('div');
     el.className = 'dust-particle';
 
-    // Random size between 150px and 450px
-    const size = 150 + Math.random() * 300;
+    // Random size before scale
+    const size = 100 + Math.random() * 400;
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
 
-    // Spread vertically
-    const startY = (Math.random() * h) - (size / 2);
+    // Choose a random edge to start from: 0=Left, 1=Right, 2=Top, 3=Bottom
+    const edge = Math.floor(Math.random() * 4);
+
+    let startX, startY, endX, endY;
+
+    if (edge === 0) { // Left
+      startX = -size;
+      startY = Math.random() * h;
+      endX = w + size;
+      endY = startY + (Math.random() - 0.5) * 400;
+    } else if (edge === 1) { // Right
+      startX = w + size;
+      startY = Math.random() * h;
+      endX = -size;
+      endY = startY + (Math.random() - 0.5) * 400;
+    } else if (edge === 2) { // Top
+      startX = Math.random() * w;
+      startY = -size;
+      endX = startX + (Math.random() - 0.5) * 400;
+      endY = h + size;
+    } else { // Bottom
+      startX = Math.random() * w;
+      startY = h + size;
+      endX = startX + (Math.random() - 0.5) * 400;
+      endY = -size;
+    }
+
+    el.style.left = `${startX}px`;
     el.style.top = `${startY}px`;
 
-    // Half start left, half start right
-    const startLeft = i % 2 === 0;
-
-    // Starting X position somewhat off-screen to allow flowing in
-    const startX = startLeft ? -size : w;
-    el.style.left = `${startX}px`;
-
     // Randomize opacity
-    el.style.opacity = 0.3 + Math.random() * 0.4;
+    el.style.opacity = 0.2 + (Math.random() * 0.5);
+
+    // Add dynamic scales to simulate depth
+    const scale = 0.5 + Math.random() * 1.5;
+    gsap.set(el, { scale: scale });
 
     dustOverlay.appendChild(el);
 
     // Animate across screen
-    const xMove = startLeft ? w + size : -(w + size);
     const duration = 12 + Math.random() * 20;
-
-    // Gently rotate while moving
-    const rotation = (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 40);
+    const rotation = (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 100);
 
     gsap.to(el, {
-      x: xMove,
-      y: (Math.random() - 0.5) * 200, // gentle vertical drift
+      x: endX - startX,
+      y: endY - startY,
       rotation: rotation,
       duration: duration,
       ease: 'sine.inOut',
