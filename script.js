@@ -140,6 +140,22 @@ function playIntro() {
     y: 0,
     duration: 0.6,
     ease: 'power1.out',
+    onComplete: startIdleAnimations,
+  });
+}
+
+let idleGulalAnim = null;
+
+function startIdleAnimations() {
+  if (idleGulalAnim) return;
+
+  // Rotates once (360deg), stops, then starts rotating again
+  idleGulalAnim = gsap.to('#assetGulal', {
+    rotation: '+=360',
+    duration: 1.8,
+    ease: 'power2.inOut',
+    repeat: -1,
+    repeatDelay: 2.2, // Waits 2.2 seconds before turning again
   });
 }
 
@@ -1077,10 +1093,17 @@ $('#assetGulal').addEventListener('click', () => {
   const el = $('#assetGulal');
   bringToFront(el);
 
+  if (idleGulalAnim) idleGulalAnim.pause();
+
+  const currentRotation = Number(gsap.getProperty(el, 'rotation')) || 0;
+  gsap.set(el, { rotation: 0 }); // Un-rotate briefly for accurate measurement
+
   const imgEl = el.querySelector('.asset-img');
   const startRect = el.getBoundingClientRect();
   const startCX = startRect.left + startRect.width / 2;
   const startCY = startRect.top + startRect.height / 2;
+
+  gsap.set(el, { rotation: currentRotation }); // Restore visual rotation
   const targetCX = window.innerWidth / 2;
   const targetCY = window.innerHeight / 2;
 
@@ -1111,6 +1134,10 @@ $('#assetGulal').addEventListener('click', () => {
       overlay.remove();
       el.style.opacity = '';
       resetAsset(el);
+      if (idleGulalAnim) {
+        // Resume rotation loop exactly where it left off, cleanly continuing its path
+        idleGulalAnim.play();
+      }
     },
   });
 
