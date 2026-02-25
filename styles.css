@@ -177,7 +177,7 @@ body {
 }
 
 .letter-title {
-  font-size: 2.375rem;
+  font-size: 20px;
   font-weight: 900;
   color: #791aab;
   /* matching the purple from reference */
@@ -188,7 +188,7 @@ body {
 }
 
 .letter-text {
-  font-size: 0.875rem;
+  font-size: 8.5px;
   color: #444;
   line-height: 1.6;
   margin-bottom: 5%;
@@ -204,9 +204,9 @@ body {
   background: #208dfd;
   color: #FFF;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 5.5px;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 10px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
