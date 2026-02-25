@@ -73,6 +73,27 @@ body {
   z-index: 10;
 }
 
+/* ===== Dust Overlay ===== */
+#dustOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  /* Behind the scene */
+  overflow: hidden;
+}
+
+.dust-particle {
+  position: absolute;
+  background-image: url('assets/powder1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* Blur filter and contrast to create a textured noise effect */
+  filter: blur(4px) contrast(150%) brightness(1.2);
+  opacity: 0.8;
+}
+
 /* ===== Box Wrapper ===== */
 .box-wrapper {
   position: relative;
@@ -140,7 +161,7 @@ body {
 /* ===== Letter (center, CSS-styled paper) ===== */
 .asset-letter {
   position: absolute;
-  top: 10%;
+  top: 15%;
   left: 50%;
   transform: translateX(-50%) rotate(-4deg);
   width: 55%;
@@ -161,7 +182,7 @@ body {
 
 /* ===== Gujiya (bottom-left, overlapping letter) ===== */
 .asset-gujiya {
-  bottom: 12%;
+  bottom: 8%;
   left: 5%;
   width: 40%;
   z-index: 4;

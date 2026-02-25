@@ -23,6 +23,7 @@ const boxLid = $('#boxLid');
 const assetBackdrop = $('#assetBackdrop');
 const cancelBtn = $('#cancelBtn');
 const sprayCanvas = $('#sprayCanvas');
+const dustOverlay = $('#dustOverlay');
 
 // ===== Cancel =====
 cancelBtn.addEventListener('click', () => {
@@ -53,6 +54,58 @@ function getTargetScale() {
 
 
 /* ================================================================
+   DUST PARTICLES (Scene 1)
+   ================================================================ */
+function initDust() {
+  const particleCount = 8;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  for (let i = 0; i < particleCount; i++) {
+    const el = document.createElement('div');
+    el.className = 'dust-particle';
+
+    // Random size between 150px and 450px
+    const size = 150 + Math.random() * 300;
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+
+    // Spread vertically
+    const startY = (Math.random() * h) - (size / 2);
+    el.style.top = `${startY}px`;
+
+    // Half start left, half start right
+    const startLeft = i % 2 === 0;
+
+    // Starting X position somewhat off-screen to allow flowing in
+    const startX = startLeft ? -size : w;
+    el.style.left = `${startX}px`;
+
+    // Randomize opacity
+    el.style.opacity = 0.3 + Math.random() * 0.4;
+
+    dustOverlay.appendChild(el);
+
+    // Animate across screen
+    const xMove = startLeft ? w + size : -(w + size);
+    const duration = 12 + Math.random() * 20;
+
+    // Gently rotate while moving
+    const rotation = (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 40);
+
+    gsap.to(el, {
+      x: xMove,
+      y: (Math.random() - 0.5) * 200, // gentle vertical drift
+      rotation: rotation,
+      duration: duration,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1
+    });
+  }
+}
+
+/* ================================================================
    INTRO SEQUENCE
    ================================================================ */
 function playIntro() {
@@ -79,12 +132,19 @@ function playIntro() {
     ease: 'power2.in',
   });
 
-  // Step 4: Big zoom — box fills most of the screen. No fade.
+  // Step 4: Big zoom — box fills most of the screen. No fade for box, but fade out dust.
   tl.to(boxWrapper, {
     scale: targetScale,
     duration: 1.2,
     ease: 'power2.inOut',
   }, '-=0.3');
+
+  // Fade out dust layout
+  tl.to(dustOverlay, {
+    opacity: 0,
+    duration: 1.0,
+    ease: 'power2.inOut',
+  }, '<');
 
   // Move assets to "viewport fit" positions during the zoom
   tl.to('#assetGujiya', {
@@ -113,6 +173,7 @@ function playIntro() {
   }, '<');
 }
 
+initDust();
 playIntro();
 
 
