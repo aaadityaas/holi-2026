@@ -86,7 +86,7 @@ body {
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translateX(-50%) scale(1.12);
+  transform: translateX(-50%) scale(1.09);
   z-index: 5;
   width: 100%;
   will-change: transform;

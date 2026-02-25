@@ -64,7 +64,7 @@ function playIntro() {
   tl.to(boxWrapper, {
     scale: 1,
     duration: 2.0,
-    ease: 'power2.inOut',
+    ease: 'back.out(1.2)',
   });
 
   // Step 2: Brief pause
@@ -75,14 +75,14 @@ function playIntro() {
     rotation: -25,
     x: '-120vw',
     duration: 0.9,
-    ease: 'power2.in',
+    ease: 'back.in(1.5)',
   });
 
   // Step 4: Big zoom — box fills most of the screen. No fade.
   tl.to(boxWrapper, {
     scale: targetScale,
     duration: 1.2,
-    ease: 'power2.inOut',
+    ease: 'back.out(2)',
   }, '-=0.3');
 
   // Move assets to "viewport fit" positions during the zoom
@@ -91,7 +91,7 @@ function playIntro() {
     bottom: '25%',
     scale: 0.7,
     duration: 1.2,
-    ease: 'power2.inOut',
+    ease: 'back.out(2)',
   }, '<');
 
   tl.to('#assetPichkari', {
@@ -100,7 +100,7 @@ function playIntro() {
     rotation: -2,
     scale: 0.6,
     duration: 1.2,
-    ease: 'power2.inOut',
+    ease: 'back.out(2)',
   }, '<');
 
   tl.to('#assetGulal', {
@@ -108,7 +108,7 @@ function playIntro() {
     bottom: '2%',
     scale: 0.7,
     duration: 1.2,
-    ease: 'power2.inOut',
+    ease: 'back.out(2)',
   }, '<');
 
   // Fade in the text message on the letter after the zoom completes
