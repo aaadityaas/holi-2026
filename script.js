@@ -88,7 +88,7 @@ function playIntro() {
 
   // Move assets to "viewport fit" positions during the zoom
   tl.to('#assetGujiya', {
-    left: '-5%',
+    left: '2%',
     bottom: '25%',
     scale: 1.05,
     duration: 1.2,
