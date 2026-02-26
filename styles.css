@@ -408,8 +408,6 @@ body {
   transform-origin: 50% 50%;
   will-change: transform, opacity;
   object-fit: contain;
-  mix-blend-mode: screen;
-  filter: blur(0.6px) saturate(1.08);
 }
 
 /* ===== Spray Canvas ===== */
