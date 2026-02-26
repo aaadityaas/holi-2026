@@ -86,7 +86,16 @@ function playIntro() {
   tl.to(boxWrapper, { rotation: -3, x: -5, duration: 0.08, yoyo: true, repeat: 5, ease: 'sine.inOut' });
   tl.to({}, { duration: 0.4 }); // pause before opening lid
 
-  // Step 3: Lid rotates and slides off to the left
+  // Step 3: Strap slides down and scales down slightly
+  tl.to('.box-strap', {
+    y: 60,
+    scale: 0.85,
+    opacity: 0,
+    duration: 0.5,
+    ease: 'power2.in',
+  });
+
+  // Step 4: Lid rotates and slides off to the left
   tl.to(boxLid, {
     rotation: -25,
     x: '-120vw',

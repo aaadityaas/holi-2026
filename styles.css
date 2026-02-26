@@ -152,10 +152,10 @@ body {
 
 .box-strap {
   position: absolute;
-  bottom: -10%;
+  bottom: -2%;
   left: 50%;
   transform: translateX(-50%);
-  width: 30%;
+  width: 20%;
   height: auto;
   z-index: 6;
 }
