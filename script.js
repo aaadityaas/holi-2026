@@ -147,6 +147,20 @@ function playIntro() {
     ease: 'back.out(2)',
   }, '<');
 
+  // Fade away the box body image during zoom
+  tl.to('.box-img', {
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.out',
+  }, '<');
+
+  // Transition background to solid color
+  tl.to('body', {
+    background: '#521490',
+    duration: 0.8,
+    ease: 'power2.out',
+  }, '<');
+
   // Fade in the text message on the letter after the zoom completes
   tl.to('#letterContent', {
     opacity: 1,
