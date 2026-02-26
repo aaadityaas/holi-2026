@@ -287,6 +287,15 @@ body {
   transform: scale(0.95);
 }
 
+.letter-image {
+  width: 80%;
+  max-height: 30%;
+  object-fit: contain;
+  margin: 6px auto;
+  display: block;
+  border-radius: 6px;
+}
+
 /* ===== Gujiya (bottom-left, overlapping letter) ===== */
 .asset-gujiya {
   bottom: 13%;

@@ -14,6 +14,67 @@ const CONFIG = {
   ],
 };
 
+/* ================================================================
+   LETTER GROUPS — driven by ?group=1 … ?group=5
+   ================================================================ */
+const LETTER_GROUPS = {
+  1: {
+    body1: 'You have already earned <strong>₹500</strong> on PayZapp. This Holi, add more colour to your savings with a <strong>Pixel Credit Card</strong>.',
+    body2: 'Enjoy up to <strong>5% cashback</strong> on your everyday spends and brighten your yearly savings by up to <strong>₹7,000</strong>.',
+    ctaLabel: 'Upgrade Credit Limit',
+    ctaLink: '#',
+    image: 'assets/letter-img-1.png',
+  },
+  2: {
+    body1: 'Placeholder body 1 for group 2.',
+    body2: 'Placeholder body 2 for group 2.',
+    ctaLabel: 'CTA Group 2',
+    ctaLink: '#',
+    image: 'assets/letter-img-2.png',
+  },
+  3: {
+    body1: 'Placeholder body 1 for group 3.',
+    body2: 'Placeholder body 2 for group 3.',
+    ctaLabel: 'CTA Group 3',
+    ctaLink: '#',
+    image: 'assets/letter-img-3.png',
+  },
+  4: {
+    body1: 'Placeholder body 1 for group 4.',
+    body2: 'Placeholder body 2 for group 4.',
+    ctaLabel: 'CTA Group 4',
+    ctaLink: '#',
+    image: 'assets/letter-img-4.png',
+  },
+  5: {
+    body1: 'Placeholder body 1 for group 5.',
+    body2: 'Placeholder body 2 for group 5.',
+    ctaLabel: 'CTA Group 5',
+    ctaLink: '#',
+    image: 'assets/letter-img-5.png',
+  },
+};
+
+function getGroupId() {
+  const params = new URLSearchParams(window.location.search);
+  return Number(params.get('group')) || 1; // Default to group 1
+}
+
+function populateLetter() {
+  const group = LETTER_GROUPS[getGroupId()] || LETTER_GROUPS[1];
+  document.getElementById('letterBody1').innerHTML = group.body1;
+  document.getElementById('letterBody2').innerHTML = group.body2;
+  document.getElementById('letterCta').textContent = group.ctaLabel;
+  document.getElementById('letterCta').addEventListener('click', () => {
+    window.location.href = group.ctaLink;
+  });
+  const imgEl = document.getElementById('letterImage');
+  imgEl.src = group.image;
+  imgEl.alt = group.ctaLabel;
+}
+
+populateLetter();
+
 // Force 2D transforms so Safari recalculates vector bounds during scaling
 gsap.config({ force3D: false });
 
