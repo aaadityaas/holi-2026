@@ -150,6 +150,16 @@ body {
   display: block;
 }
 
+.box-strap {
+  position: absolute;
+  bottom: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: auto;
+  z-index: 6;
+}
+
 /* ===== Box Body ===== */
 .box-body {
   position: relative;
