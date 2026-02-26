@@ -49,11 +49,69 @@ body {
   align-items: center;
 }
 
-.preloader-flower {
+.css-flower {
+  position: relative;
   width: 54px;
   height: 54px;
   margin-bottom: 20px;
-  animation: pulseRotate 2s infinite ease-in-out;
+  animation: flowerSpin 3s infinite linear;
+}
+
+.petal {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #FFB347;
+  border-radius: 50% 50% 50% 0;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0% 0%;
+}
+
+.petal:nth-child(1) {
+  transform: rotate(0deg) translate(-50%, -50%) rotate(45deg);
+}
+
+.petal:nth-child(2) {
+  transform: rotate(72deg) translate(-50%, -50%) rotate(45deg);
+}
+
+.petal:nth-child(3) {
+  transform: rotate(144deg) translate(-50%, -50%) rotate(45deg);
+}
+
+.petal:nth-child(4) {
+  transform: rotate(216deg) translate(-50%, -50%) rotate(45deg);
+}
+
+.petal:nth-child(5) {
+  transform: rotate(288deg) translate(-50%, -50%) rotate(45deg);
+}
+
+.flower-center {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #F28C28;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+@keyframes flowerSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.08);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
 }
 
 .preloader-text {
@@ -64,20 +122,6 @@ body {
   color: #FFA1CD;
   font-family: 'Inter', sans-serif;
   letter-spacing: -0.2px;
-}
-
-@keyframes pulseRotate {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-
-  50% {
-    transform: scale(1.1) rotate(180deg);
-  }
-
-  100% {
-    transform: scale(1) rotate(360deg);
-  }
 }
 
 /* ===== Toolbar ===== */
