@@ -43,6 +43,12 @@ body {
   transition: opacity 0.5s ease;
 }
 
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .preloader-flower {
   width: 54px;
   height: 54px;
