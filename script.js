@@ -88,10 +88,10 @@ function playIntro() {
 
   // Step 3: Strap slides down and scales down slightly
   tl.to('.box-strap', {
-    y: 60,
+    y: 140,
     scale: 0.85,
     opacity: 0,
-    duration: 0.5,
+    duration: 0.65,
     ease: 'power2.in',
   });
 
