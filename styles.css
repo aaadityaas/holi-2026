@@ -59,39 +59,38 @@ body {
 
 .petal {
   position: absolute;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   background: #FFB347;
   border-radius: 50% 50% 50% 0;
   top: 50%;
   left: 50%;
-  transform-origin: 0% 0%;
 }
 
 .petal:nth-child(1) {
-  transform: rotate(0deg) translate(-50%, -50%) rotate(45deg);
+  transform: translate(-50%, -100%) rotate(-45deg);
 }
 
 .petal:nth-child(2) {
-  transform: rotate(72deg) translate(-50%, -50%) rotate(45deg);
+  transform: translate(0%, -50%) rotate(27deg);
 }
 
 .petal:nth-child(3) {
-  transform: rotate(144deg) translate(-50%, -50%) rotate(45deg);
+  transform: translate(-15%, -5%) rotate(99deg);
 }
 
 .petal:nth-child(4) {
-  transform: rotate(216deg) translate(-50%, -50%) rotate(45deg);
+  transform: translate(-85%, -5%) rotate(171deg);
 }
 
 .petal:nth-child(5) {
-  transform: rotate(288deg) translate(-50%, -50%) rotate(45deg);
+  transform: translate(-100%, -50%) rotate(243deg);
 }
 
 .flower-center {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background: #F28C28;
   border-radius: 50%;
   top: 50%;
