@@ -27,7 +27,7 @@ const LETTER_GROUPS = {
   },
   2: {
     body1: 'You have made lot of UPI payments this year. This Holi, make them even more rewarding.',
-    body2: 'Apply for a <strong>lifetime free UPI RuPay Credit Card<strong> and double your celebrations with <strong>₹500* worth benefits<strong>
+    body2: 'Apply for a <strong>lifetime free UPI RuPay Credit Card</strong> and double your celebrations with <strong>₹500* worth benefits</strong>',
     ctaLabel: 'Apply Now',
     ctaLink: '#',
     image: 'assets/letter-img-2.png',
@@ -262,6 +262,10 @@ function startIdleAnimations() {
    PRELOADER
    ================================================================ */
 const preloaderEl = document.getElementById('preloader');
+const sceneEl = document.getElementById('scene');
+
+// Hide scene initially
+gsap.set(sceneEl, { opacity: 0 });
 
 window.addEventListener('load', () => {
   // Give it a minimum visibility time so it looks intentional
@@ -269,7 +273,13 @@ window.addEventListener('load', () => {
     preloaderEl.style.opacity = '0';
     setTimeout(() => {
       preloaderEl.remove();
-      playIntro();
+      // Fade in the scene, then start the intro
+      gsap.to(sceneEl, {
+        opacity: 1,
+        duration: 0.6,
+        ease: 'sine.out',
+        onComplete: playIntro,
+      });
     }, 500); // Match CSS opacity transition duration
   }, 600);
 });
