@@ -150,15 +150,27 @@ function playIntro() {
   // Fade away the box body image during zoom
   tl.to('.box-img', {
     opacity: 0,
-    duration: 0.8,
-    ease: 'power2.out',
+    duration: 1.2,
+    ease: 'sine.inOut',
   }, '<');
 
-  // Transition background to solid color
-  tl.to('body', {
-    background: '#521490',
-    duration: 0.8,
-    ease: 'power2.out',
+  // Overlay solid color on top of bg image
+  tl.call(() => {
+    if (!document.getElementById('bgOverlay')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'bgOverlay';
+      overlay.style.cssText = `
+        position: fixed; inset: 0; z-index: 5;
+        background: #521490; opacity: 0;
+        pointer-events: none;
+      `;
+      document.body.insertBefore(overlay, document.body.firstChild);
+    }
+  }, [], '<');
+  tl.to('#bgOverlay', {
+    opacity: 1,
+    duration: 1.4,
+    ease: 'sine.inOut',
   }, '<');
 
   // Fade in the text message on the letter after the zoom completes
