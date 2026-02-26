@@ -89,6 +89,7 @@ function playIntro() {
   // Step 3: Strap slides down and scales down slightly
   tl.to('.box-strap', {
     y: 140,
+    rotationX: 90,
     scale: 0.85,
     opacity: 0,
     duration: 0.65,
