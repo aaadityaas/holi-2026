@@ -427,6 +427,11 @@ function spawnImageSplash(x, y, angle, opts = {}) {
 }
 
 function triggerPitchkariSplash(el, splashConfig = {}) {
+  // Play water splash sound for this shot
+  const splashSound = new Audio('assets/water splash.mp3');
+  splashSound.currentTime = 0;
+  splashSound.play().catch(() => { });
+
   const { x, y, angle } = getPichkariNozzlePoint(el);
   spawnImageSplash(x, y, angle, splashConfig);
   spawnImageSplash(x, y, angle - 0.24, {
