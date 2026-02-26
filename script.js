@@ -1010,6 +1010,16 @@ function startCircleMaskAnimation(el, onComplete, sourceImgSrc = 'assets/gujiya.
 
     biteConfig.forEach((cfg, index) => {
       biteTimeline.call(() => {
+        // Play nom nom sound for this bite
+        const nomSound = new Audio('assets/nom nom.mp3');
+        nomSound.currentTime = 0;
+        nomSound.play().catch(() => { });
+        // Stop sound after this bite's duration
+        setTimeout(() => {
+          nomSound.pause();
+          nomSound.currentTime = 0;
+        }, cfg.duration * 1000);
+
         const bite = { x: cfg.cx, y: cfg.cy, r: 0 };
         activeBites.push(bite);
 
