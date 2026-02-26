@@ -176,7 +176,6 @@ function playIntro() {
   // Fade in the text message on the letter after the zoom completes
   tl.to('#letterContent', {
     opacity: 1,
-    y: 0,
     duration: 0.6,
     ease: 'power1.out',
     onComplete: startIdleAnimations,

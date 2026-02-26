@@ -238,7 +238,6 @@ body {
   padding: 8% 10% 8%;
   text-align: center;
   opacity: 0;
-  transform: translateY(15px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Hidden initially, will be faded in via JS */
