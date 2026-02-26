@@ -196,6 +196,14 @@ const sprayCtx = sprayCanvas.getContext('2d');
 let sprayParticles = [];
 let sprayAnimId = null;
 
+// Preload dust images for spray particles
+const sprayDustSources = ['assets/yellow dust.png', 'assets/pink dust.png', 'assets/blue dust.png'];
+const sprayDustImgs = sprayDustSources.map((src) => {
+  const img = new Image();
+  img.src = src;
+  return img;
+});
+
 function resizeSprayCanvas() {
   const dpr = window.devicePixelRatio || 1;
   sprayCanvas.width = window.innerWidth * dpr;
@@ -208,8 +216,8 @@ function createSprayParticle(originX, originY, angle, opts = {}) {
     arcSpread = 0.6,
     minSpeed = 6,
     maxSpeed = 18,
-    sizeMin = 1,
-    sizeMax = 3.5,
+    sizeMin = 8,
+    sizeMax = 22,
     alphaMin = 0.72,
     alphaMax = 1,
     gravityMin = 0.08,
@@ -225,7 +233,6 @@ function createSprayParticle(originX, originY, angle, opts = {}) {
   const speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
   const spread = (Math.random() - 0.5) * arcSpread;
   const finalAngle = angle + spread;
-  const colors = ['#00BCD4', '#4FC3F7', '#B3E5FC', '#E0F7FA', '#26C6DA'];
 
   return {
     x: originX,
@@ -233,7 +240,7 @@ function createSprayParticle(originX, originY, angle, opts = {}) {
     vx: Math.cos(finalAngle) * speed,
     vy: Math.sin(finalAngle) * speed,
     size: sizeMin + Math.random() * (sizeMax - sizeMin),
-    color: colors[Math.floor(Math.random() * colors.length)],
+    img: sprayDustImgs[Math.floor(Math.random() * sprayDustImgs.length)],
     alpha: alphaMin + Math.random() * (alphaMax - alphaMin),
     gravity: gravityMin + Math.random() * (gravityMax - gravityMin),
     friction,
@@ -264,20 +271,14 @@ function animateSpray() {
     if (p.life <= 0) { sprayParticles.splice(i, 1); continue; }
 
     sprayCtx.globalAlpha = p.alpha;
-    sprayCtx.fillStyle = p.color;
 
-    if (p.stretch > 1.05) {
-      const angle = Math.atan2(p.vy, p.vx);
-      sprayCtx.save();
-      sprayCtx.translate(p.x, p.y);
-      sprayCtx.rotate(angle);
-      sprayCtx.beginPath();
-      sprayCtx.ellipse(0, 0, p.size, p.size * p.stretch, 0, 0, Math.PI * 2);
-      sprayCtx.fill();
-      sprayCtx.restore();
+    if (p.img && p.img.complete && p.img.naturalWidth > 0) {
+      const s = p.size;
+      sprayCtx.drawImage(p.img, p.x - s / 2, p.y - s / 2, s, s);
     } else {
+      sprayCtx.fillStyle = '#E91E63';
       sprayCtx.beginPath();
-      sprayCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      sprayCtx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
       sprayCtx.fill();
     }
   }
