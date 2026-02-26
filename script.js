@@ -310,7 +310,7 @@ const PITCHKARI_SHOTS = [
     thrust: 22,
     splash: {
       src: 'assets/pink dust.png',
-      size: 494,
+      size: 642,
       travel: 72,
       scaleTo: 0.85,
       opacity: 0.92,
@@ -325,7 +325,7 @@ const PITCHKARI_SHOTS = [
     thrust: 24,
     splash: {
       src: 'assets/yellow dust.png',
-      size: 494,
+      size: 642,
       travel: 76,
       scaleTo: 0.85,
       opacity: 0.94,
@@ -340,7 +340,7 @@ const PITCHKARI_SHOTS = [
     thrust: 21,
     splash: {
       src: 'assets/blue dust.png',
-      size: 507,
+      size: 660,
       travel: 225,
       scaleTo: 0.85,
       opacity: 0.9,
