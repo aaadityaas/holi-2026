@@ -214,8 +214,8 @@ function resizeSprayCanvas() {
 function createSprayParticle(originX, originY, angle, opts = {}) {
   const {
     arcSpread = 0.6,
-    minSpeed = 6,
-    maxSpeed = 18,
+    minSpeed = 12,
+    maxSpeed = 30,
     sizeMin = 18,
     sizeMax = 42,
     alphaMin = 0.72,
