@@ -162,7 +162,21 @@ function startIdleAnimations() {
   });
 }
 
-playIntro();
+/* ================================================================
+   PRELOADER
+   ================================================================ */
+const preloaderEl = document.getElementById('preloader');
+
+window.addEventListener('load', () => {
+  // Give it a minimum visibility time so it looks intentional
+  setTimeout(() => {
+    preloaderEl.style.opacity = '0';
+    setTimeout(() => {
+      preloaderEl.remove();
+      playIntro();
+    }, 500); // Match CSS opacity transition duration
+  }, 600);
+});
 
 
 /* ================================================================
