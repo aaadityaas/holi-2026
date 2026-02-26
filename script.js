@@ -224,7 +224,7 @@ function playIntro() {
       const overlay = document.createElement('div');
       overlay.id = 'bgOverlay';
       overlay.style.cssText = `
-        position: fixed; inset: 0; z-index: 5;
+        position: fixed; inset: 0; z-index: 9;
         background: #521490; opacity: 0;
         pointer-events: none;
       `;
