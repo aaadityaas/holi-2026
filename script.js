@@ -209,6 +209,9 @@ function playIntro() {
   }, '<');
 
   // Fade away the box body image during zoom
+  tl.call(() => {
+    document.getElementById('boxBody').style.background = '#521490';
+  }, [], '<');
   tl.to('.box-img', {
     opacity: 0,
     duration: 1.2,
