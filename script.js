@@ -95,10 +95,8 @@ function playIntro() {
   });
 
   // Step 4: Big zoom — box fills most of the screen. No fade.
-  // Also fade out the diagonal box shadow cast.
   tl.to(boxWrapper, {
     scale: targetScale,
-    '--shadow-opacity': 0,
     duration: 1.2,
     ease: 'back.out(2)',
   }, '+=0.5');
